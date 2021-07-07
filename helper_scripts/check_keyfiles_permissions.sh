@@ -19,4 +19,4 @@ shopt -s extglob
 # Turn off history to avoid surprises when using '!'
 set -H
 
-find /etc/kubernetes/ssl/!*key.pem | xargs stat -c permissions=%a
+find /etc/kubernetes/ssl/(!*key).pem | xargs stat -c permissions=%a
