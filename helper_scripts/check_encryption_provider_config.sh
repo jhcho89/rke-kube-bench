@@ -6,7 +6,7 @@
 #   true/false
 
 # TODO: Figure out the file location from the kube-apiserver commandline args
-ENCRYPTION_CONFIG_FILE="/node/etc/kubernetes/ssl/encryption.yaml"
+ENCRYPTION_CONFIG_FILE="/etc/kubernetes/ssl/encryption.yaml"
 
 if [[ ! -f "${ENCRYPTION_CONFIG_FILE}" ]]; then
   echo "false"
