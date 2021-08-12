@@ -2,100 +2,14 @@
 controls:
 version: 1.6
 id: 2
-text: "Etcd Node Configuration"
+text: "Etcd Node"
 type: "etcd"
 groups:
-  - id: 1.1
-    text: "Etcd Node Configuration Files"
+  - id: 5.1
+    text: "Etcd SSL/TLS 적용"
     checks:
-      - id: 1.1.11
-        text: "Ensure that the etcd data directory permissions are set to 700 or more restrictive (Automated)"
-        audit: stat -c %a /var/lib/etcd
-        tests:
-          test_items:
-            - flag: "700"
-              compare:
-                op: eq
-                value: "700"
-              set: true
-        remediation: |
-          On the etcd server node, get the etcd data directory, passed as an argument --data-dir,
-          from the below command:
-          ps -ef | grep etcd Run the below command (based on the etcd data directory found above). For example,
-          chmod 700 /var/lib/etcd
-        scored: true
-
-      - id: 1.1.12
-        text: "Ensure that the etcd data directory ownership is set to etcd:etcd (Automated)"
-        audit: stat -c %U:%G /var/lib/etcd
-        tests:
-          test_items:
-            - flag: "etcd:etcd"
-              set: true
-        remediation: |
-          On the etcd server node, get the etcd data directory, passed as an argument --data-dir,
-          from the below command:
-          ps -ef | grep etcd
-          Run the below command (based on the etcd data directory found above).
-          For example, chown etcd:etcd /var/lib/etcd
-
-          A system service account is required for etcd data directory ownership.
-          Refer to Rancher's hardening guide for more details on how to configure this ownership.
-        scored: true
-
-      - id: 1.1.19
-        text: "Ensure that the Kubernetes PKI directory and file ownership is set to root:root (Automated)"
-        audit: "helper_scripts/check_files_owner_in_dir.sh /etc/kubernetes/ssl"
-        tests:
-          test_items:
-            - flag: "true"
-              compare:
-                op: eq
-                value: "true"
-              set: true
-        remediation: |
-          Run the below command (based on the file location on your system) on the master node.
-          For example,
-          chown -R root:root /etc/kubernetes/pki/
-        scored: true
-
-      - id: 1.1.20
-        text: "Ensure that the Kubernetes PKI certificate file permissions are set to 644 or more restrictive (Automated) "
-        audit: "helper_scripts/check_certfiles_permissions.sh"
-        use_multiple_values: true
-        tests:
-          test_items:
-            - flag: "permissions"
-              compare:
-                op: bitmask
-                value: "644"
-        remediation: |
-          Run the below command (based on the file location on your system) on the master node.
-          For example,
-          chmod -R 644 /etc/kubernetes/pki/*.crt
-        scored: true
-
-      - id: 1.1.21
-        text: "Ensure that the Kubernetes PKI key file permissions are set to 600 (Automated)"
-        audit: "helper_scripts/check_keyfiles_permissions.sh"
-        use_multiple_values: true
-        tests:
-          test_items:
-            - flag: "permissions"
-              compare:
-                op: bitmask
-                value: "644"
-        remediation: |
-          Run the below command (based on the file location on your system) on the master node.
-          For example,
-          chmod -R 600 /etc/kubernetes/ssl/*key.pem
-        scored: true
-
-  - id: 2
-    text: "Etcd Node Configuration Files"
-    checks:
-      - id: 2.1
-        text: "Ensure that the --cert-file and --key-file arguments are set as appropriate (Automated)"
+      - id: 5.1.1
+        text: "--cert-file, --key-file 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: and
@@ -112,8 +26,8 @@ groups:
           --key-file=</path/to/key-file>
         scored: true
 
-      - id: 2.2
-        text: "Ensure that the --client-cert-auth argument is set to true (Automated)"
+      - id: 5.1.2
+        text: "--client-cert-auth true 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: or
@@ -131,8 +45,8 @@ groups:
           --client-cert-auth="true"
         scored: true
 
-      - id: 2.3
-        text: "Ensure that the --auto-tls argument is not set to true (Automated)"
+      - id: 5.1.3
+        text: "--auto-tls false 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: or
@@ -149,9 +63,8 @@ groups:
             --auto-tls=false
         scored: true
 
-      - id: 2.4
-        text: "Ensure that the --peer-cert-file and --peer-key-file arguments are
-        set as appropriate (Automated)"
+      - id: 5.1.4
+        text: "--peer-cert-file, --peer-key-file 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: and
@@ -169,8 +82,8 @@ groups:
           --peer-key-file=</path/to/peer-key-file>
         scored: true
 
-      - id: 2.5
-        text: "Ensure that the --peer-client-cert-auth argument is set to true (Automated)"
+      - id: 5.1.5
+        text: "--peer-client-cert-auth true 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: or
@@ -188,8 +101,8 @@ groups:
           --peer-client-cert-auth=true
         scored: true
 
-      - id: 2.6
-        text: "Ensure that the --peer-auto-tls argument is not set to true (Automated)"
+      - id: 5.1.6
+        text: "--peer-auto-tls false 설정 또는 제거"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           bin_op: or
@@ -207,8 +120,8 @@ groups:
           --peer-auto-tls=false
         scored: true
 
-      - id: 2.7
-        text: "Ensure that a unique Certificate Authority is used for etcd (Automated)"
+      - id: 5.1.7
+        text: "--trusted-ca-file 설정 확인"
         audit: "/bin/ps -ef | /bin/grep $etcdbin | /bin/grep -v grep"
         tests:
           test_items:

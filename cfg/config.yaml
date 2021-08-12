@@ -303,7 +303,5 @@ target_mapping:
   "rke-1.6":
     - "master"
     - "node"
-    - "controlplane"
     - "etcd"
-    - "policies"
 
